@@ -5,6 +5,15 @@
 import cv2, time, pandas, logging, base64
 # importing datetime class from datetime library 
 from datetime import datetime
+
+import pika
+
+connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+channel = connection.channel()
+
+channel.queue_declare(queue='hello')
+
+
   
 # Assigning our static_back to None 
 static_back = None
@@ -56,7 +65,12 @@ while True:
     (cnts, _) = cv2.findContours(thresh_frame.copy(),  
                        cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) 
 
-    if len(cnts)>5:
+    if len(cnts)>10:
         print('motion detected')
         retval, buffer = cv2.imencode('.jpg', frame)
         jpg_as_text = base64.b64encode(buffer)
+        channel.basic_publish(exchange='',
+                      routing_key='hello',
+                      body=jpg_as_text)
+
+connection.close()
