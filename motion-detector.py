@@ -2,15 +2,15 @@
 # WebCam Motion Detector 
   
 # importing OpenCV, time and Pandas library 
-import cv2, time, pandas, logging
+import cv2, time, pandas, logging, base64
 # importing datetime class from datetime library 
 from datetime import datetime 
   
 # Assigning our static_back to None 
 static_back = None
   
-# List when any moving object appear 
-motion_list = [ None, None ] 
+# List when any moving object appear
+motion_list = [ None, None ]
   
 # Time of movement 
 time = [] 
@@ -58,50 +58,5 @@ while True:
 
     if len(cnts)>5:
         print('motion detected')
-  
-    # Appending status of motion 
-    motion_list.append(motion) 
-  
-    motion_list = motion_list[-2:] 
-  
-    # Appending Start time of motion 
-    if motion_list[-1] == 1 and motion_list[-2] == 0: 
-        time.append(datetime.now()) 
-  
-    # Appending End time of motion 
-    if motion_list[-1] == 0 and motion_list[-2] == 1: 
-        time.append(datetime.now()) 
-  
-    # Displaying image in gray_scale 
-    cv2.imshow("Gray Frame", gray) 
-  
-    # Displaying the difference in currentframe to 
-    # the staticframe(very first_frame) 
-    cv2.imshow("Difference Frame", diff_frame) 
-  
-    # Displaying the black and white image in which if 
-    # intencity difference greater than 30 it will appear white 
-    cv2.imshow("Threshold Frame", thresh_frame) 
-  
-    # Displaying color frame with contour of motion of object 
-    cv2.imshow("Color Frame", frame) 
-  
-    key = cv2.waitKey(1) 
-    # if q entered whole process will stop 
-    if key == ord('q'): 
-        # if something is movingthen it append the end time of movement 
-        if motion == 1: 
-            time.append(datetime.now()) 
-        break
-  
-# Appending time of motion in DataFrame 
-for i in range(0, len(time), 2): 
-    df = df.append({"Start":time[i], "End":time[i + 1]}, ignore_index = True) 
-  
-# Creating a csv file in which time of movements will be saved 
-df.to_csv("Time_of_movements.csv") 
-  
-video.release() 
-  
-# Destroying all the windows 
-cv2.destroyAllWindows() 
+        retval, buffer = cv2.imencode('.jpg', frame)
+        jpg_as_text = base64.b64encode(buffer)
