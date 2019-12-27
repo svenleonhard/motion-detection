@@ -11,6 +11,6 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - 80:80
+      - 8081:80
     networks:
         - app-tier
