@@ -1,0 +1,16 @@
+version: '3'
+
+networks:
+  app-tier:
+    external: true
+
+services:
+  motion-detection-webapp:
+    build: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 80:80
+    networks:
+        - app-tier

@@ -8,6 +8,7 @@ export class WebsocketService {
 
   public createWebsocket(): Subject<MessageEvent> {
     let socket = new WebSocket('ws://localhost:8999');
+    console.log(socket);
     let observable = Observable.create(
                 (observer: Observer<MessageEvent>) => {
                     socket.onmessage = observer.next.bind(observer);
