@@ -13,8 +13,9 @@ const wss = new ws.Server({ server });
 
 websocket_connections = []
 
-console.log(wss)
 wss.on('connection', (websocket) => {
+
+    console.log('new websocket connection');
 
     //connection is up, let's add a simple simple event
     websocket.on('message', (message) => {
@@ -33,7 +34,7 @@ wss.on('connection', (websocket) => {
 
 //initialize messaging 
 var queue = 'observation';
-amqp.connect('amqp://localhost', function(error0, connection) {
+amqp.connect('amqp://rabbit', function(error0, connection) {
   if (error0) {
     throw error0;
   }
@@ -47,6 +48,7 @@ amqp.connect('amqp://localhost', function(error0, connection) {
     });
 
     channel.consume(queue, function(msg) {
+        console.log('consumed new message')
         websocket_connections.forEach(websocket => {
             console.log('send motion capture to client')
             websocket.send(msg.content.toString())
@@ -57,6 +59,10 @@ amqp.connect('amqp://localhost', function(error0, connection) {
         });
 
   });
+});
+
+app.get('/', function (req, res) {
+  res.send('Hello World!');
 });
 
 //start our server
