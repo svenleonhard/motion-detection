@@ -11,26 +11,28 @@ const server = http.createServer(app);
 //initialize the WebSocket server instance
 const wss = new ws.Server({ server });
 
-websocket_instance = null
+websocket_connections = []
 
-wss.on('connection', (ws) => {
+console.log(wss)
+wss.on('connection', (websocket) => {
 
     //connection is up, let's add a simple simple event
-    ws.on('message', (message) => {
+    websocket.on('message', (message) => {
 
         //log the received message and send it back to the client
         console.log('received: %s', message);
-        ws.send(`Hello, you sent -> ${message}`);
+        websocket.send(`Hello, you sent -> ${message}`);
     });
 
     //send immediatly a feedback to the incoming connection    
-    ws.send('Hi there, I am a WebSocket server');
-    websocket_instance = ws
+    websocket.send('connected');
+    websocket_connections.push(websocket)
+    
 });
 
 
 //initialize messaging 
-var queue = 'hello';
+var queue = 'observation';
 amqp.connect('amqp://localhost', function(error0, connection) {
   if (error0) {
     throw error0;
@@ -45,12 +47,10 @@ amqp.connect('amqp://localhost', function(error0, connection) {
     });
 
     channel.consume(queue, function(msg) {
-        //console.log(msg.content.toString());
-        console.log('new motion')
-        console.log(ws)
-        if(websocket_instance){
-            websocket_instance.send('new motion')
-        }
+        websocket_connections.forEach(websocket => {
+            console.log('send motion capture to client')
+            websocket.send(msg.content.toString())
+        });
 
       }, {
           noAck: true
