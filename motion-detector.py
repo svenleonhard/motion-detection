@@ -8,10 +8,10 @@ from datetime import datetime
 
 import pika
 
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-channel = connection.channel()
+# connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+# channel = connection.channel()
 
-channel.queue_declare(queue='observation')
+# channel.queue_declare(queue='observation')
 
 
   
@@ -44,7 +44,7 @@ while True:
   
     # Converting gray scale image to GaussianBlur  
     # so that change can be find easily 
-    gray = cv2.GaussianBlur(gray, (21, 21), 0) 
+    gray = cv2.GaussianBlur(gray, (41, 41), 0) 
   
     # In first iteration we assign the value  
     # of static_back to our first frame 
@@ -58,7 +58,7 @@ while True:
   
     # If change in between static background and 
     # current frame is greater than 30 it will show white color(255) 
-    thresh_frame = cv2.threshold(diff_frame, 30, 255, cv2.THRESH_BINARY)[1] 
+    thresh_frame = cv2.threshold(diff_frame, 100, 255, cv2.THRESH_BINARY)[1] 
     thresh_frame = cv2.dilate(thresh_frame, None, iterations = 2) 
   
     # Finding contour of moving object 
@@ -70,9 +70,9 @@ while True:
             print('motion detected')
             retval, buffer = cv2.imencode('.jpg', frame)
             jpg_as_text = base64.b64encode(buffer)
-            channel.basic_publish(exchange='',
-                        routing_key='observation',
-                        body=jpg_as_text)
+            # channel.basic_publish(exchange='',
+                        # routing_key='observation',
+                        # body=jpg_as_text)
         except Exception as e:
             print(e)
 
