@@ -1,1 +1,21 @@
-<p>snapshots works!</p>
+<div class="content" role="main">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-4 m-3">
+        <h1>Snapshots</h1>
+
+        <div *ngFor="let snapshot of snapshots" >
+          <h3>
+            {{ snapshot.datetime }}
+          </h3>
+
+          <div class="mb-4">
+            <img class="img-fluid" [src]="snapshot.frame" />
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

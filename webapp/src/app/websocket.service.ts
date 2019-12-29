@@ -6,6 +6,9 @@ import { HttpClient } from "@angular/common/http";
   providedIn: "root"
 })
 export class WebsocketService {
+
+  image;
+  detected = false;
   url = "localhost:8999";
   websocketConnected = false;
   private socket: Subject<any>;
@@ -36,8 +39,27 @@ export class WebsocketService {
     return this.socket;
   }
 
+  getDetected() {
+    return this.detected;
+  }
+
+  getImage() {
+    return this.image;
+  }
+
+  setDtected(detected, image) {
+    this.image = image;
+    this.detected = detected;
+  }
+
   makeSnapshot(): Observable<any> {
     const toRet = this.http.get("http://" + this.url + "/make-snapshot");
+    console.log(toRet);
+    return toRet;
+  }
+
+  getSnapshots(): Observable<any> {
+    const toRet = this.http.get("http://" + this.url + "/snapshots");
     console.log(toRet);
     return toRet;
   }

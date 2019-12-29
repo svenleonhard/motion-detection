@@ -75,5 +75,9 @@ while True:
                         body=jpg_as_text)
         except Exception as e:
             print(e)
+            connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+            channel = connection.channel()
+
+            channel.queue_declare(queue='observation')
 
 connection.close()

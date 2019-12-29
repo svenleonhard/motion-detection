@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from "@angular/platform-browser";
+import { WebsocketService } from "../websocket.service";
 
 @Component({
   selector: 'app-snapshots',
@@ -7,9 +9,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SnapshotsComponent implements OnInit {
 
-  constructor() { }
+  snapshots = [];
+  constructor(private websocketService: WebsocketService, private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
+    this.websocketService.getSnapshots().subscribe(snaphots => {
+      console.log(snaphots);
+      this.snapshots = snaphots.map(snapshot=>{
+
+        const img = "data:image/jpg;base64," + snapshot.frame;
+        const image = this.sanitizer.bypassSecurityTrustResourceUrl(img);
+
+        return {
+          datetime: snapshot.datetime,
+          frame: image
+        }
+
+      })
+
+      console.log(this.snapshots);
+    });
   }
 
 }

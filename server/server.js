@@ -82,10 +82,7 @@ app.get("/", function(req, res) {
 
 app.get("/dismiss", function(req, res) {
 
-  current_frame = null
-  websocket_connections.forEach(websocket => {
-     websocket.send("empty");
-   });
+  dismissFrame();
   res.send({
     message: 'dismissed'
   });
@@ -101,6 +98,8 @@ app.get("/make-snapshot", function(req, res) {
     }
     snappshoted_frames.push(snapshot)
     new_frame = false
+
+    dismissFrame();
     
     res.send({
       message: 'Frame added'
@@ -113,10 +112,18 @@ app.get("/make-snapshot", function(req, res) {
 
 app.get("/snapshots", function(req, res) {
   
-  console.log('snapshots')
   res.send(snappshoted_frames);
   
 });
+
+function dismissFrame() {
+  current_frame = null
+  websocket_connections.forEach(websocket => {
+     websocket.send("empty");
+   });
+
+   console.log('dismissed');
+}
 
 //start our server
 server.listen(process.env.PORT || 8999, () => {

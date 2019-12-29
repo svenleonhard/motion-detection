@@ -11,7 +11,7 @@ import { WebsocketService } from "../websocket.service";
 export class HomeComponent implements OnInit {
   image;
   state = "alert alert-success";
-  detected = false;
+  detected;
   cctvMessage = "No motion detected";
 
   private socket: Subject<any>;
@@ -28,6 +28,18 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
+
+
+    this.detected = this.websocketService.getDetected();
+
+    if(this.detected) {
+      this.image = this.websocketService.getImage();
+
+      this.state = "alert alert-danger";
+
+      this.cctvMessage = "We detected a motion!";
+    }
+
     this.socket.subscribe(message => {
       this.message = message.data;
 
@@ -35,6 +47,9 @@ export class HomeComponent implements OnInit {
         this.cctvMessage = "No motion detected";
         this.state = "alert alert-success";
         this.detected = false;
+        this.image = null;
+        this.websocketService.setDtected(this.detected, this.image);
+
       }
       else{
         const img = "data:image/jpg;base64," + this.message;
@@ -42,6 +57,7 @@ export class HomeComponent implements OnInit {
 
         this.state = "alert alert-danger";
         this.detected = true;
+        this.websocketService.setDtected(this.detected, this.image);
         this.cctvMessage = "We detected a motion!";
       }
     });
