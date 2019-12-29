@@ -9,7 +9,6 @@ services:
     build: .
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules
     ports:
       - 8999:8999
       - 9229:9229
