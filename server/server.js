@@ -32,8 +32,15 @@ wss.on("connection", websocket => {
   });
 
   //send immediatly a feedback to the incoming connection
-  websocket.send("connected");
+  if(current_frame) {
+    websocket.send(current_frame);
+  }
+  else {
+    websocket.send("empty");
+  }
+  
   websocket_connections.push(websocket);
+
 });
 
 //initialize messaging
@@ -73,10 +80,26 @@ app.get("/", function(req, res) {
   res.send("Hello World!");
 });
 
+app.get("/dismiss", function(req, res) {
+
+  current_frame = null
+  websocket_connections.forEach(websocket => {
+     websocket.send("empty");
+   });
+  res.send({
+    message: 'dismissed'
+  });
+});
+
 app.get("/make-snapshot", function(req, res) {
 
   if (new_frame) {
-    snappshoted_frames.push(current_frame)
+
+    snapshot = {
+      datetime: new Date(),
+      frame: current_frame
+    }
+    snappshoted_frames.push(snapshot)
     new_frame = false
     
     res.send({

@@ -31,7 +31,12 @@ export class HomeComponent implements OnInit {
     this.socket.subscribe(message => {
       this.message = message.data;
 
-      if (this.message != "connected") {
+      if (this.message == "empty") {
+        this.cctvMessage = "No motion detected";
+        this.state = "alert alert-success";
+        this.detected = false;
+      }
+      else{
         const img = "data:image/jpg;base64," + this.message;
         this.image = this.sanitizer.bypassSecurityTrustResourceUrl(img);
 
@@ -43,10 +48,10 @@ export class HomeComponent implements OnInit {
   }
 
   onDismiss() {
-    this.cctvMessage = "No motion detected";
-    this.state = "alert alert-success";
-
-    this.detected = false;
+    this.websocketService.dismiss().subscribe(response => {
+      console.log("response");
+      console.log(response);
+    });
   }
 
   onSnapshot() {

@@ -41,4 +41,10 @@ export class WebsocketService {
     console.log(toRet);
     return toRet;
   }
+
+  dismiss(): Observable<any> {
+    const toRet = this.http.get("http://" + this.url + "/dismiss");
+    console.log(toRet);
+    return toRet;
+  }
 }
