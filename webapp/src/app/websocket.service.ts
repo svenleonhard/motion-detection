@@ -1,17 +1,21 @@
 import { Injectable } from "@angular/core";
 import { Subject, Observer, Observable } from "rxjs";
-import { HttpClient } from '@angular/common/http';
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: "root"
 })
 export class WebsocketService {
-
-
-  url = 'localhost:8999';
-  constructor(public http: HttpClient) { }
+  url = "localhost:8999";
+  websocketConnected = false;
+  private socket: Subject<any>;
+  constructor(public http: HttpClient) {}
 
   public createWebsocket(): Subject<MessageEvent> {
+    if (this.websocketConnected) {
+      console.log('Already connected - send socket');
+      return this.socket;
+    }
     let socket = new WebSocket("ws://" + this.url);
     console.log(socket);
     let observable = Observable.create((observer: Observer<MessageEvent>) => {
@@ -27,11 +31,13 @@ export class WebsocketService {
         }
       }
     };
-    return Subject.create(observer, observable);
+    this.socket = Subject.create(observer, observable);
+    this.websocketConnected = true;
+    return this.socket;
   }
 
   makeSnapshot(): Observable<any> {
-    const toRet =  this.http.get('http://' + this.url + '/make-snapshot');
+    const toRet = this.http.get("http://" + this.url + "/make-snapshot");
     console.log(toRet);
     return toRet;
   }
