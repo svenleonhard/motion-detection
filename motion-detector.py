@@ -8,10 +8,10 @@ from datetime import datetime
 
 import pika
 
-# connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-# channel = connection.channel()
+connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+channel = connection.channel()
 
-# channel.queue_declare(queue='observation')
+channel.queue_declare(queue='observation')
 
 
   
@@ -70,9 +70,9 @@ while True:
             print('motion detected')
             retval, buffer = cv2.imencode('.jpg', frame)
             jpg_as_text = base64.b64encode(buffer)
-            # channel.basic_publish(exchange='',
-                        # routing_key='observation',
-                        # body=jpg_as_text)
+            channel.basic_publish(exchange='',
+                        routing_key='observation',
+                        body=jpg_as_text)
         except Exception as e:
             print(e)
 

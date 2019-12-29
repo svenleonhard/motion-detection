@@ -21,7 +21,7 @@ export class AppComponent {
   private message: string;
   private sentMessage: string;
   constructor(
-    websocketService: WebsocketService,
+    private websocketService: WebsocketService,
     private sanitizer: DomSanitizer
   ) {
     this.socket = websocketService.createWebsocket();
@@ -47,5 +47,12 @@ export class AppComponent {
     this.state = "alert alert-success";
 
     this.detected = false
+  }
+
+  onSnapshot() {
+    this.websocketService.makeSnapshot().subscribe(response => {
+      console.log('response')
+      console.log(response);
+    });
   }
 }
